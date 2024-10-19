@@ -2,38 +2,33 @@ import { NextRequest, NextResponse } from 'next/server';
 import dbConnect from "@/lib/dbConnect";
 import { Student } from "@/models";
 
-export async function POST(request: NextRequest) {
+export async function GET(request: NextRequest) {
     await dbConnect();
 
-    const data = await request.json();
-    const { studentId, averageGradeThreshold, assistancePercentageThreshold } = data;
+    const { searchParams } = new URL(request.url);
+    const studentId = searchParams.get('studentId');
+    const minGrade = Number(searchParams.get('minGrade'));
+    const minAssistance = Number(searchParams.get('minAssistance'));
 
-    if (!studentId || typeof averageGradeThreshold !== 'number' || typeof assistancePercentageThreshold !== 'number') {
+    if (!studentId || isNaN(minGrade) || isNaN(minAssistance)) {
         return NextResponse.json({ error: 'Invalid input' }, { status: 400 });
     }
 
     try {
-        const student = await Student.findOne({ id: studentId });
+        const student = await Student.findOne({ id: Number(studentId) });
 
         if (!student) {
             return NextResponse.json({ error: 'Student not found' }, { status: 404 });
         }
 
-        const averageGradePassed = student.averageGrade >= averageGradeThreshold;
-        const assistancePercentagePassed = student.assistancePercentage >= assistancePercentageThreshold;
-
         return NextResponse.json({
-            averageGrade: {
-                passed: averageGradePassed,
-                actual: student.averageGrade
-            },
-            assistancePercentage: {
-                passed: assistancePercentagePassed,
-                actual: student.assistancePercentage
-            }
+            gradeAvg: student.averageGrade,
+            passGradeThreshold: student.averageGrade >= minGrade,
+            assistancePercentage: student.assistancePercentage,
+            passAssistanceThreshold: student.assistancePercentage >= minAssistance
         });
     } catch (error) {
-        console.error('Error in university-mock-api:', error);
+        console.error('Error in student-status-api:', error);
         return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
     }
 }
