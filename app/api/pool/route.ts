@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
-import Moralis from 'moralis';
-import dbConnect from '@/lib/dbConnect';
-import { Government } from "@/models";
+// import Moralis from 'moralis';
+// import dbConnect from '@/lib/dbConnect';
+// import { Government } from "@/models";
 
 // This endpoint works on main net, but we are using testnet for this project,
 // so the usd_value of the tokens is always cero.
