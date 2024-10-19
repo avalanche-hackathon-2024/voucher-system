@@ -3,7 +3,8 @@ import Moralis from 'moralis';
 import dbConnect from '@/lib/dbConnect';
 import { Government } from "@/models";
 
-// This works on mainet, but we are using testnet for this project, so the usd_value is always cero.
+// This endpoint works on main net, but we are using testnet for this project,
+// so the usd_value of the tokens is always cero.
 
 // // Initialize Moralis
 // Moralis.start({
