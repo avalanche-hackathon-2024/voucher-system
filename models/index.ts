@@ -5,10 +5,12 @@ const counterSchema = new mongoose.Schema({
     _id: { type: String, required: true },
     seq: { type: Number, default: 0 }
 });
-const Counter = mongoose.model('Counter', counterSchema);
+
+// Use mongoose.models to check if the model already exists
+const Counter = mongoose.models.Counter || mongoose.model('Counter', counterSchema);
 
 // Function to get the next sequence value
-async function getNextSequence(name : string) {
+async function getNextSequence(name: string) {
     const counter = await Counter.findByIdAndUpdate(
         name,
         { $inc: { seq: 1 } },
@@ -26,6 +28,8 @@ const studentSchema = new mongoose.Schema({
     enrollmentStatus: { type: String, enum: ['active', 'inactive', 'graduated'], default: 'active' },
     walletAddress: { type: String, required: true, unique: true },
     voucherContractAddress: String,
+    averageGrade: Number,
+    assistancePercentage: Number,
 });
 
 studentSchema.pre('save', async function(next) {
@@ -60,6 +64,7 @@ const governmentSchema = new mongoose.Schema({
     id: { type: Number, unique: true },
     walletAddress: { type: String, required: true, unique: true },
     role: { type: String, default: 'admin' },
+    whiteListedBlockchains: [String],
 });
 
 governmentSchema.pre('save', async function(next) {
@@ -87,17 +92,13 @@ applicationSchema.pre('save', async function(next) {
     next();
 });
 
-// Create models
-const Student = mongoose.model('Student', studentSchema);
-const University = mongoose.model('University', universitySchema);
-const Government = mongoose.model('Government', governmentSchema);
-const Application = mongoose.model('Application', applicationSchema);
-
 studentSchema.index({ id: 1 });
 universitySchema.index({ id: 1 });
 governmentSchema.index({ id: 1 });
 applicationSchema.index({ id: 1 });
 
-module.exports = {
-    Student, University, Government, Application
-};
+// Create models
+export const Student = mongoose.models.Student || mongoose.model('Student', studentSchema);
+export const University = mongoose.models.University || mongoose.model('University', universitySchema);
+export const Government = mongoose.models.Government || mongoose.model('Government', governmentSchema);
+export const Application = mongoose.models.Application || mongoose.model('Application', applicationSchema);
