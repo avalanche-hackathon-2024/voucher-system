@@ -9,8 +9,10 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@moralisweb3/next": "^2.27.2",
     "mongodb": "^6.9.0",
     "mongoose": "^8.7.2",
+    "moralis": "^2.27.2",
     "next": "14.2.15",
     "react": "^18",
     "react-dom": "^18",
